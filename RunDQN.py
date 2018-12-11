@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from Environment import  *
 env = Environment(nRow,nCol)
-state_size = 2
+state_size = 100
 action_size = 4
 agent = DQNAgent(state_size, action_size,nRow,nCol)
 # agent.load("./save/cartpole-dqn.h5")
@@ -15,11 +15,12 @@ N_episodes = 100
 reward_List = []
 number_of_iterations_per_episode = []
 number_of_episodes = []
-
+samples=Extract_Features
 for episode in range(N_episodes):
     done = False
     reward_per_episode=0
     state = env.reset()
+    state = samples.Extract_Samples(state[0], state[1], nRow, nCol)
     state = np.reshape(state, [1, state_size])
     number_of_iterations=0
     number_of_episodes.append(episode)

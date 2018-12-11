@@ -17,8 +17,8 @@ from scipy.spatial import  distance
 
 """
 
-nRow=7
-nCol=7
+nRow=3
+nCol=3
 
 class Environment:
     
@@ -59,24 +59,24 @@ class Environment:
         if(action==3):
             state_next = self.state[0]  , (self.state[1] - 1) # left
 
-        # samples=Extract_Features
-        # samples_state_next=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
-        # samples_goal_state = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        samples=Extract_Features
+        state_next=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
+        state_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
 
-        #Collect reward
-        if(state_next==(self.nRow-1,self.nCol-1)):
-        #if(state_next==self.goal_state):
-            reward=1
-            done=True
-
-        # if(distance.euclidean(samples_state_next,samples_goal_state)==0):
+        # #Collect reward
+        # if(state_next==(self.nRow-1,self.nCol-1)):
+        # #if(state_next==self.goal_state):
         #     reward=1
         #     done=True
 
+        if(distance.euclidean(state_next,state_goal)==0):
+            reward=1
+            done=True
+
         self.state = state_next
+        #return state_next, reward, done
         return state_next, reward, done
-        #return samples_state_next, next, reward, done
-    
+
     def allowed_actions(self):
         # Generate list of actions allowed depending on agent grid location
         actions_allowed = []

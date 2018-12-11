@@ -8,7 +8,7 @@ from Environment import *
 
 # Settings
 
-state_size=2
+state_size=100
 action_size=4
 
 env = Environment(nRow, nCol)
@@ -19,9 +19,10 @@ number_of_episodes=[]
 
 # Train agent
 print("\nTraining agent...\n")
-N_episodes =100
+N_episodes =2
 batch_size = 32
 reward_List=[]
+samples=Extract_Features
 for episode in range(N_episodes):
 
     done = False
@@ -30,7 +31,8 @@ for episode in range(N_episodes):
     # Generate an episode
     reward_episode = 0
     state = env.reset()  # starting state
-    state = np.reshape(state, [1, 2])
+    state=samples.Extract_Samples(state[0],state[1],nRow,nCol)
+    state = np.reshape(state, [1, state_size])
 #    state = state[0] * nRow + state[1]
     number_of_episodes.append(episode)
     iteration=0
@@ -38,7 +40,8 @@ for episode in range(N_episodes):
         iteration+=1
         action = agent.get_action(env,nRow)  # get action
         state_next, reward, done = env.step(action)  # evolve state by action
-        state_next = np.reshape(state_next, [1, 2])
+        state_next = np.reshape(state_next, [1, state_size])
+        print("state next", state_next)
         agent.replay_memory(state, action, reward, state_next, done)
         agent.train_replay()
         agent.train((state, action, state_next, reward, done))  # train agent
