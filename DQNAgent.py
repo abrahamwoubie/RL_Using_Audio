@@ -29,8 +29,13 @@ class DQNAgent:
         model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
         return model
 
-    def remember(self, state, action, reward, next_state, done):
+    #def remember(self, state, action, reward, next_state, done):
+     #   self.memory.append((state, action, reward, next_state, done))
+
+    def replay_memory(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
+        if self.epsilon > self.epsilon_min:
+             self.epsilon *= self.epsilon_decay
 
     def act(self, state):
         if np.random.rand() <= self.epsilon:
@@ -40,6 +45,7 @@ class DQNAgent:
 
     def replay(self, batch_size):
         minibatch = random.sample(self.memory, batch_size)
+
         for state, action, reward, next_state, done in minibatch:
             target = reward
             if not done:
@@ -57,6 +63,8 @@ class DQNAgent:
     def save(self, name):
         self.model.save_weights(name)
 
+    def get_action_next(self,env,nRow):
+        return np.random.choice(env.allowed_actions())
 
     def get_action(self, env,nRow):
         # Epsilon-greedy agent policy

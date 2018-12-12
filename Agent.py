@@ -17,7 +17,7 @@ class Agent:
         self.epsilon_decay = 0.99  # epsilon decay after each episode
         self.learning_rate = 0.99  # learning rate
         self.discount_factor = 0.99  # reward discount factor
-        self.Q=np.zeros([100,action_size])
+        self.Q=np.zeros([nRow*nCol,action_size])
 
         self.batch_size = 32
         self.train_start = 100
@@ -64,8 +64,7 @@ class Agent:
     def train(self, memory):
 
         (state, action, state_next, reward, done) = memory
-        print("State in train",state)
-        #print("Memory",memory)
+        print("Memory",memory)
         self.Q[state,action]+=self.learning_rate * \
                               (reward + self.discount_factor * np.max(self.Q[state_next,:]) - self.Q[state,action])
 

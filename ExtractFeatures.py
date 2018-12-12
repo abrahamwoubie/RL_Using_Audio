@@ -9,14 +9,16 @@ class Extract_Features:
 
 
     def Extract_Samples(row, col,nRow,nCol):
-        fs = 100  # sample rate
+        #print("Extract Sample of Row {} Col {} nRow {} nCol {}".format(row,col,nRow,nCol))
+
+        fs = 5  # sample rate
         f = 2  # the frequency of the signal
 
         x = np.arange(fs)  # the points on the x axis for plotting
 
         # compute the value (amplitude) of the sin wave at the for each sample
         # if letter in b'G':
-        if(row==nRow-1 and col==nCol-1):
+        if(row==nRow and col==nCol):
             samples = [100 + row + col + np.sin(2 * np.pi * f * (i / fs)) for i in x]
         else:
             samples = [row + col + np.sin(2 * np.pi * f * (i / fs)) for i in x]

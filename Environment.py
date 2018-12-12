@@ -46,7 +46,6 @@ class Environment:
         # Evolve agent state
         reward = 0
         done = False
-
         if(action==0):
             state_next =  (self.state[0]-1) , self.state[1] # up
 
@@ -60,21 +59,20 @@ class Environment:
             state_next = self.state[0]  , (self.state[1] - 1) # left
 
         samples=Extract_Features
-        state_next=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
-        state_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
-
-        # #Collect reward
-        # if(state_next==(self.nRow-1,self.nCol-1)):
-        # #if(state_next==self.goal_state):
-        #     reward=1
-        #     done=True
-
-        if(distance.euclidean(state_next,state_goal)==0):
+        features_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
+        features_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        if(distance.euclidean(features_goal,features_current)==0):
             reward=1
             done=True
 
+        # if(state_next==(self.nRow-1,self.nCol-1)):
+        #     reward=1
+        #     done=True
+
         self.state = state_next
-        #return state_next, reward, done
+        #features=np.ones([5,1])
+        print("Current State {} Next State {} Feature {}".format(self.state,state_next,features_goal))
+        #return state_next, features_goal, reward, done
         return state_next, reward, done
 
     def allowed_actions(self):
