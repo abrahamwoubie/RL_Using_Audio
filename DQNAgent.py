@@ -5,7 +5,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-from keras.layers import Dense, Conv2D, Flatten
+from keras.layers import Dense, Conv1D, Flatten
 
 
 
@@ -38,10 +38,10 @@ class DQNAgent:
 
         #model.add(Convolution2D(32, (1, 1), activation='relu', input_shape=(1, 1, 100), data_format='channels_first'))
 
-        model.add(Conv2D(64, kernel_size=1, activation='relu', input_shape = (1, 1, 100))) #, data_format='channels_first'))
-        model.add(Conv2D(32, kernel_size=1, activation='relu'))
+        model.add(Conv1D(24, kernel_size=1, activation='relu', input_shape = (100,1))) #, data_format='channels_first'))
+        model.add(Conv1D(24, kernel_size=1, activation='relu'))
         model.add(Flatten())
-        model.add(Dense(4, activation='softmax'))
+        model.add(Dense(self.action_size, activation='softmax'))
         model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
 
