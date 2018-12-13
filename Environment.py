@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Agent import Agent
 from ExtractFeatures import Extract_Features
-
+#from RunDQN import *
 
 from scipy.spatial import  distance
 
@@ -42,8 +42,9 @@ class Environment:
         return self.state #,self.goal_state
 
 
-    def step(self, action):
+    def step(self, action,use_samples,use_spectrogram,use_raw_data):
         # Evolve agent state
+
         reward = 0
         done = False
         if(action==0):
@@ -59,19 +60,28 @@ class Environment:
             state_next = self.state[0]  , (self.state[1] - 1) # left
 
         samples=Extract_Features
-        samples_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
-        samples_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
 
-        #samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1],nRow-1,nCol-1)
-        #samples_goal = samples.Extract_Raw_Data(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        # options to run the experiment using samples, spectrogram or raw data
+        if(use_samples):
+            samples_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
+            samples_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
+            if (distance.euclidean(samples_goal, samples_current) == 0):
+                reward = 1
+                done = True
 
-        # samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1],nRow-1,nCol-1)
-        # samples_goal = samples.Extract_Spectrogram(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        if(use_spectrogram):
+            samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1],nRow-1,nCol-1)
+            samples_goal = samples.Extract_Spectrogram(nRow - 1, nCol - 1,nRow-1,nCol-1)
+            if (np.mean(samples_goal)==np.mean(samples_current)):
+                reward = 1
+                done = True
 
-        if(distance.euclidean(samples_goal,samples_current)==0):
-        #if(np.mean(samples_goal==np.mean(samples_current))):
-            reward=1
-            done=True
+        if(use_raw_data):
+            samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1],nRow-1,nCol-1)
+            samples_goal = samples.Extract_Raw_Data(nRow - 1, nCol - 1,nRow-1,nCol-1)
+            if (distance.euclidean(samples_goal, samples_current) == 0):
+                reward = 1
+                done = True
 
         # if(state_next==(self.nRow-1,self.nCol-1)):
         #     reward=1

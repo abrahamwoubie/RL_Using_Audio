@@ -5,45 +5,65 @@ import matplotlib.pyplot as plt
 
 from Environment import  *
 env = Environment(nRow,nCol)
-state_size = 100
+
+
+# Observation and Action Sizes
+state_size = 57534
 action_size = 4
+
 agent = DQNAgent(state_size, action_size,nRow,nCol)
-# agent.load("./save/cartpole-dqn.h5")
+
+#Options for running using samples, spectrogram and raw data
+
+use_samples=0
+use_spectrogram=1
+use_raw_data=0
+
+#parameters
 batch_size=32
 N_episodes = 50
+
 reward_List = []
 number_of_iterations_per_episode = []
 number_of_episodes = []
-samples=Extract_Features
+
+samples=Extract_Features # to access the member functions of the ExtractFeatures class
+
 for episode in range(N_episodes):
     done = False
     reward_per_episode=0
     state = env.reset()
-    state = samples.Extract_Samples(state[0], state[1], nRow-1, nCol-1)
+
+    #options to run the experiment using samples, spectrogram or raw data
+    if(use_samples):
+        state = samples.Extract_Samples(state[0], state[1], nRow-1, nCol-1)
+    elif(use_spectrogram):
+        state = samples.Extract_Spectrogram(state[0], state[1], nRow - 1, nCol - 1)
+    else:
+        state = samples.Extract_Raw_Data(state[0], state[1], nRow - 1, nCol - 1)
+
     state = np.reshape(state, [1, state_size])
     number_of_iterations=0
     number_of_episodes.append(episode)
     for iterations in range(100):
         number_of_iterations+=1
-        # env.render()
-        #action = agent.act(state)
-        action = agent.get_action(env,nRow)
-        feature, reward, done = env.step(action)
-        #next_state, reward, done = env.step(action)
+        action = agent.get_action_next(env,nRow)
+        feature, reward, done = env.step(action,use_samples,use_spectrogram,use_raw_data)
         reward_per_episode+=reward
-        #next_state = np.reshape(next_state, [1, state_size])
         feature = np.reshape(feature, [1, state_size])
         agent.replay_memory(state, action, reward, feature, done)
-        #agent.replay_memory(state, action, reward, next_state, done)
         state=feature
         if done:
             break
         if len(agent.memory) > batch_size:
             agent.replay(batch_size)
-    print("episode: {}/{}, Number of Iterations, {}, Reward: {}"
+    print("episode: {}/{}, Number of Iterations: {}, Reward: {}"\
           .format(episode, N_episodes, number_of_iterations, reward_per_episode))
+
+    #append number of iteration and reward for plotting
     number_of_iterations_per_episode.append(number_of_iterations)
     reward_List.append(reward)
+
 percentage_of_successful_episodes = (sum(reward_List) / N_episodes) * 100
 
 print("Percentage of Successful Episodes is {} {}".format(percentage_of_successful_episodes, '%'))
@@ -52,6 +72,4 @@ fig.suptitle('Q-Learning', fontsize=12)
 plt.plot(np.arange(len(number_of_episodes)), number_of_iterations_per_episode)
 plt.ylabel('Number of Iterations')
 plt.xlabel('Episode')
-# plt.grid(True)
-#plt.savefig("Q_Learning_10_10.png")
 plt.show()
