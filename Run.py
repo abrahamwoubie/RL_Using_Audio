@@ -8,7 +8,7 @@ from Environment import *
 
 # Settings
 
-state_size=57534
+state_size=100
 action_size=4
 
 env = Environment(nRow, nCol)
@@ -18,8 +18,8 @@ number_of_iterations_per_episode=[]
 number_of_episodes=[]
 
 #Options for running using samples, spectrogram and raw data
-use_samples=0
-use_spectrogram=1
+use_samples=1
+use_spectrogram=0
 use_raw_data=0
 
 # Train agent

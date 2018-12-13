@@ -8,7 +8,7 @@ env = Environment(nRow,nCol)
 
 
 # Observation and Action Sizes
-state_size = 100 #57534
+state_size = 100
 action_size = 4
 
 agent = DQNAgent(state_size, action_size,nRow,nCol)
@@ -42,6 +42,7 @@ for episode in range(N_episodes):
         state = samples.Extract_Raw_Data(state[0], state[1], nRow - 1, nCol - 1)
 
     state = np.reshape(state, [1, state_size])
+    #print("Shape is ",state.shape)
     number_of_iterations=0
     number_of_episodes.append(episode)
     for iterations in range(100):

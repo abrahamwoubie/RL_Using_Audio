@@ -5,7 +5,9 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-from keras.layers import Dense, Conv2D, Flatten
+from keras.layers import Dense, Conv2D, Flatten, Dropout
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Convolution2D, MaxPooling2D
 
 
 class Agent:
@@ -37,28 +39,29 @@ class Agent:
         self.update_target_model()
 
     #
-    def build_model(self):
-        model = Sequential()
-        model.add(Dense(24, input_dim=self.state_size, activation='relu', kernel_initializer='random_uniform'))
-        #model.add(Dense(24, input_shape=(100,), activation='relu', kernel_initializer='random_uniform'))
-        model.add(Dense(24, activation='relu', kernel_initializer='random_uniform'))
-        model.add(Dense(self.action_size, activation='linear', kernel_initializer='random_uniform'))
-        model.summary()
-        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
-        return model
-
     # def build_model(self):
-    #
     #     model = Sequential()
-    #     # add model layers
-    #     model.add(Conv2D(24, kernel_size=1, activation='relu', input_shape = (100,100,1)))
-    #     model.add(Conv2D(24, kernel_size=1, activation='relu'))
-    #     model.add(Flatten())
-    #     model.add(Dense(self.action_size, activation='softmax'))
+    #     model.add(Dense(24, input_dim=self.state_size, activation='relu', kernel_initializer='random_uniform'))
+    #     #model.add(Dense(24, input_shape=(100,), activation='relu', kernel_initializer='random_uniform'))
+    #     model.add(Dense(24, activation='relu', kernel_initializer='random_uniform'))
+    #     model.add(Dense(self.action_size, activation='linear', kernel_initializer='random_uniform'))
     #     model.summary()
-    #     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    #     model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
     #     return model
 
+    def build_model(self):
+        model = Sequential()
+
+        #model.add(Convolution2D(32, (1, 1), activation='relu', input_shape=(1, 1, 100), data_format='channels_first'))
+
+        model.add(Conv2D(64, kernel_size=1, activation='relu', input_shape = (1, 1, 100))) #, data_format='channels_first'))
+        model.add(Conv2D(32, kernel_size=1, activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(4, activation='softmax'))
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        return model
+
+        # '''
     def update_target_model(self):
         self.target_model.set_weights(self.model.get_weights())
 

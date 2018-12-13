@@ -22,15 +22,27 @@ class DQNAgent:
         self.train_start = 100
         self.model = self._build_model()
         self.Q = np.zeros([nRow*nCol, 4])
+    #
+    # def _build_model(self):
+    #     # Neural Net for Deep-Q learning Model
+    #     model = Sequential()
+    #     #model.add(Dense(24, input_dim=self.state_size, activation='relu'))
+    #     model.add(Dense(24,input_shape=(self.state_size,),activation='relu'))
+    #     model.add(Dense(24, activation='relu'))
+    #     model.add(Dense(self.action_size, activation='linear'))
+    #     model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
+    #     return model
 
     def _build_model(self):
-        # Neural Net for Deep-Q learning Model
         model = Sequential()
-        #model.add(Dense(24, input_dim=self.state_size, activation='relu'))
-        model.add(Dense(24,input_shape=(self.state_size,),activation='relu'))
-        model.add(Dense(24, activation='relu'))
-        model.add(Dense(self.action_size, activation='linear'))
-        model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
+
+        #model.add(Convolution2D(32, (1, 1), activation='relu', input_shape=(1, 1, 100), data_format='channels_first'))
+
+        model.add(Conv2D(64, kernel_size=1, activation='relu', input_shape = (1, 1, 100))) #, data_format='channels_first'))
+        model.add(Conv2D(32, kernel_size=1, activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(4, activation='softmax'))
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return model
 
     #def remember(self, state, action, reward, next_state, done):
@@ -53,8 +65,7 @@ class DQNAgent:
         for state, action, reward, next_state, done in minibatch:
             target = reward
             if not done:
-                target = (reward + self.gamma *
-                          np.amax(self.model.predict(next_state)[0]))
+                target = (reward + self.gamma * np.amax(self.model.predict(next_state)[0]))
             target_f = self.model.predict(state)
             target_f[0][action] = target
             self.model.fit(state, target_f, epochs=1, verbose=0)
