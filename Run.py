@@ -8,11 +8,11 @@ from Environment import *
 
 # Settings
 
-state_size=2
+state_size=100
 action_size=4
 
 env = Environment(nRow, nCol)
-agent = Agent(env,state_size,action_size,nRow, nCol)
+agent = Agent(env,state_size,action_size,nRow-1, nCol-1)
 
 number_of_iterations_per_episode=[]
 number_of_episodes=[]
@@ -31,23 +31,25 @@ for episode in range(N_episodes):
     # Generate an episode
     reward_episode = 0
     state = env.reset()  # starting state
-    #state=samples.Extract_Samples(state[0],state[1],nRow,nCol)
+    state=samples.Extract_Samples(state[0],state[1],nRow-1,nCol-1)
+    #state=samples.Extract_Raw_Data(state[0],state[1],nRow-1,nCol-1)
+    #state = samples.Extract_Spectrogram(state[0], state[1], nRow - 1, nCol - 1)
     state = np.reshape(state, [1, state_size])
-#    state = state[0] * nRow + state[1]
     number_of_episodes.append(episode)
     iteration=0
     while iteration < 100:
         iteration+=1
-        action = agent.get_action(env,nRow)  # get action
-        state_next, reward, done = env.step(action)  # evolve state by action
-        state_next = np.reshape(state_next, [1, state_size])
-        agent.replay_memory(state, action, reward, state_next, done)
+        #action = agent.get_action(env,nRow)  # get action
+        action=agent.get_action_next(env,nRow)
+        features, reward, done = env.step(action)  # evolve state by action
+        features = np.reshape(features, [1, state_size])
+        agent.replay_memory(state, action, reward, features, done)
         agent.train_replay()
-        agent.train((state, action, state_next, reward, done))  # train agent
+        agent.train((state, action, features, reward, done))  # train agent
         reward_episode += reward
         if done==True:
             break
-        state = state_next  # transition to next state
+        state = features  # transition to next state
 
     # Decay agent exploration parameter
     agent.epsilon = max(agent.epsilon * agent.epsilon_decay, 0.01)

@@ -17,8 +17,8 @@ from scipy.spatial import  distance
 
 """
 
-nRow=3
-nCol=3
+nRow=4
+nCol=4
 
 class Environment:
     
@@ -59,9 +59,17 @@ class Environment:
             state_next = self.state[0]  , (self.state[1] - 1) # left
 
         samples=Extract_Features
-        features_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
-        features_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
-        if(distance.euclidean(features_goal,features_current)==0):
+        samples_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
+        samples_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
+
+        #samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1],nRow-1,nCol-1)
+        #samples_goal = samples.Extract_Raw_Data(nRow - 1, nCol - 1,nRow-1,nCol-1)
+
+        # samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1],nRow-1,nCol-1)
+        # samples_goal = samples.Extract_Spectrogram(nRow - 1, nCol - 1,nRow-1,nCol-1)
+
+        if(distance.euclidean(samples_goal,samples_current)==0):
+        #if(np.mean(samples_goal==np.mean(samples_current))):
             reward=1
             done=True
 
@@ -70,10 +78,7 @@ class Environment:
         #     done=True
 
         self.state = state_next
-        #features=np.ones([5,1])
-        print("Current State {} Next State {} Feature {}".format(self.state,state_next,features_goal))
-        #return state_next, features_goal, reward, done
-        return state_next, reward, done
+        return samples_goal, reward, done
 
     def allowed_actions(self):
         # Generate list of actions allowed depending on agent grid location

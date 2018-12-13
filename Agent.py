@@ -38,6 +38,7 @@ class Agent:
     def build_model(self):
         model = Sequential()
         model.add(Dense(24, input_dim=self.state_size, activation='relu', kernel_initializer='he_uniform'))
+        #model.add(Dense(24, input_shape=(100,), activation='relu', kernel_initializer='he_uniform'))
         model.add(Dense(24, activation='relu', kernel_initializer='he_uniform'))
         model.add(Dense(self.action_size, activation='linear', kernel_initializer='he_uniform'))
         model.summary()
@@ -46,6 +47,9 @@ class Agent:
 
     def update_target_model(self):
         self.target_model.set_weights(self.model.get_weights())
+
+    def get_action_next(self,env,nRow):
+        return np.random.choice(env.allowed_actions())
 
     def get_action(self, env,nRow):
         # Epsilon-greedy agent policy
@@ -64,9 +68,9 @@ class Agent:
     def train(self, memory):
 
         (state, action, state_next, reward, done) = memory
-        print("Memory",memory)
-        self.Q[state,action]+=self.learning_rate * \
-                              (reward + self.discount_factor * np.max(self.Q[state_next,:]) - self.Q[state,action])
+        #print("Memory",memory)
+#        self.Q[state,action]+=self.learning_rate * \
+ #                             (reward + self.discount_factor * np.max(self.Q[state_next,:]) - self.Q[state,action])
 
 
     def replay(self, batch_size):

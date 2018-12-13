@@ -11,7 +11,7 @@ class Extract_Features:
     def Extract_Samples(row, col,nRow,nCol):
         #print("Extract Sample of Row {} Col {} nRow {} nCol {}".format(row,col,nRow,nCol))
 
-        fs = 5  # sample rate
+        fs = 100  # sample rate
         f = 2  # the frequency of the signal
 
         x = np.arange(fs)  # the points on the x axis for plotting
@@ -37,6 +37,8 @@ class Extract_Features:
         # x = carrier + noise  # x is the sample
         x = carrier
         frequencies, times, spectrogram = signal.spectrogram(x, fs)
+        if (row == nRow and col == nCol):
+            spectrogram = spectrogram * 100
         return spectrogram
 
     def Extract_Pitch(row, col,nRow,nCol):
@@ -73,4 +75,4 @@ class Extract_Features:
     def Extract_Raw_Data (row, col,nRow,nCol):
         sound = AudioSegment.from_wav("test.wav")
         raw_data = sound._data
-        print(len(raw_data))
+        return raw_data

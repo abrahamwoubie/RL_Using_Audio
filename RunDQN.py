@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from Environment import  *
 env = Environment(nRow,nCol)
-state_size = 2
+state_size = 100
 action_size = 4
 agent = DQNAgent(state_size, action_size,nRow,nCol)
 # agent.load("./save/cartpole-dqn.h5")
@@ -20,8 +20,7 @@ for episode in range(N_episodes):
     done = False
     reward_per_episode=0
     state = env.reset()
-    #state=np.ones([5,1])
-    #state = samples.Extract_Samples(state[0], state[1], nRow-1, nCol-1)
+    state = samples.Extract_Samples(state[0], state[1], nRow-1, nCol-1)
     state = np.reshape(state, [1, state_size])
     number_of_iterations=0
     number_of_episodes.append(episode)
@@ -30,15 +29,14 @@ for episode in range(N_episodes):
         # env.render()
         #action = agent.act(state)
         action = agent.get_action_next(env,nRow)
-        #next_state, feature, reward, done = env.step(action)
-        next_state, reward, done = env.step(action)
+        feature, reward, done = env.step(action)
+        #next_state, reward, done = env.step(action)
         reward_per_episode+=reward
-        next_state = np.reshape(next_state, [1, state_size])
-        #feature = np.reshape(feature, [1, state_size])
-        #agent.replay_memory(state, action, reward, feature, done)
-        agent.replay_memory(state, action, reward, next_state, done)
-        #state = feature
-        state=next_state
+        #next_state = np.reshape(next_state, [1, state_size])
+        feature = np.reshape(feature, [1, state_size])
+        agent.replay_memory(state, action, reward, feature, done)
+        #agent.replay_memory(state, action, reward, next_state, done)
+        state=feature
         if done:
             break
         if len(agent.memory) > batch_size:
