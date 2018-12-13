@@ -5,6 +5,8 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+from keras.layers import Dense, Conv2D, Flatten
+
 
 
 class DQNAgent:
@@ -17,6 +19,7 @@ class DQNAgent:
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
+        self.train_start = 100
         self.model = self._build_model()
         self.Q = np.zeros([nRow*nCol, 4])
 
@@ -28,6 +31,7 @@ class DQNAgent:
         model.add(Dense(self.action_size, activation='linear'))
         model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
         return model
+
 
     #def remember(self, state, action, reward, next_state, done):
      #   self.memory.append((state, action, reward, next_state, done))

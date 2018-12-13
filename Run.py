@@ -12,7 +12,7 @@ state_size=100
 action_size=4
 
 env = Environment(nRow, nCol)
-agent = Agent(env,state_size,action_size,nRow-1, nCol-1)
+agent = Agent(env,state_size,action_size,nRow, nCol)
 
 number_of_iterations_per_episode=[]
 number_of_episodes=[]
@@ -37,10 +37,10 @@ for episode in range(N_episodes):
     state = np.reshape(state, [1, state_size])
     number_of_episodes.append(episode)
     iteration=0
-    while iteration < 100:
+    for iterations in range(100):
         iteration+=1
         #action = agent.get_action(env,nRow)  # get action
-        action=agent.get_action_next(env,nRow)
+        action=agent.get_action(env,nRow)
         features, reward, done = env.step(action)  # evolve state by action
         features = np.reshape(features, [1, state_size])
         agent.replay_memory(state, action, reward, features, done)
@@ -49,7 +49,8 @@ for episode in range(N_episodes):
         reward_episode += reward
         if done==True:
             break
-        state = features  # transition to next state
+        #state = features  # transition to next state
+        state=features
 
     # Decay agent exploration parameter
     agent.epsilon = max(agent.epsilon * agent.epsilon_decay, 0.01)

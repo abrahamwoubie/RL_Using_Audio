@@ -9,8 +9,7 @@ state_size = 100
 action_size = 4
 agent = DQNAgent(state_size, action_size,nRow,nCol)
 # agent.load("./save/cartpole-dqn.h5")
-
-batch_size = 32
+batch_size=32
 N_episodes = 50
 reward_List = []
 number_of_iterations_per_episode = []
@@ -28,7 +27,7 @@ for episode in range(N_episodes):
         number_of_iterations+=1
         # env.render()
         #action = agent.act(state)
-        action = agent.get_action_next(env,nRow)
+        action = agent.get_action(env,nRow)
         feature, reward, done = env.step(action)
         #next_state, reward, done = env.step(action)
         reward_per_episode+=reward
