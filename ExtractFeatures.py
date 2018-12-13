@@ -38,7 +38,7 @@ class Extract_Features:
         x = carrier
         frequencies, times, spectrogram = signal.spectrogram(x, fs)
         if (row == nRow and col == nCol):
-            spectrogram = spectrogram * 100
+            spectrogram = spectrogram *100
         return spectrogram
 
     def Extract_Pitch(row, col,nRow,nCol):
@@ -75,4 +75,6 @@ class Extract_Features:
     def Extract_Raw_Data (row, col,nRow,nCol):
         sound = AudioSegment.from_wav("test.wav")
         raw_data = sound._data
+        if(row == nRow and col == nCol):
+            raw_data=raw_data*5
         return raw_data

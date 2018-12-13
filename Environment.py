@@ -47,17 +47,17 @@ class Environment:
 
         reward = 0
         done = False
-        if(action==0):
-            state_next =  (self.state[0]-1) , self.state[1] # up
+        if(action==0): # up
+            state_next =  (self.state[0]-1) , self.state[1]
 
-        if(action==1):
-            state_next = self.state[0] , (self.state[1] + 1) # right
+        if(action==1): #right
+            state_next = self.state[0] , (self.state[1] + 1)
 
-        if(action==2):
-            state_next = (self.state[0] + 1) , self.state[1] # down
+        if(action==2): # down
+            state_next = (self.state[0] + 1) , self.state[1]
 
-        if(action==3):
-            state_next = self.state[0]  , (self.state[1] - 1) # left
+        if(action==3): # left
+            state_next = self.state[0]  , (self.state[1] - 1)
 
         samples=Extract_Features
 
@@ -79,7 +79,7 @@ class Environment:
         if(use_raw_data):
             samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1],nRow-1,nCol-1)
             samples_goal = samples.Extract_Raw_Data(nRow - 1, nCol - 1,nRow-1,nCol-1)
-            if (distance.euclidean(samples_goal, samples_current) == 0):
+            if (np.mean(samples_goal)==np.mean(samples_current) == 0):
                 reward = 1
                 done = True
 

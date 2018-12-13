@@ -8,15 +8,14 @@ env = Environment(nRow,nCol)
 
 
 # Observation and Action Sizes
-state_size = 57534
+state_size = 100 #57534
 action_size = 4
 
 agent = DQNAgent(state_size, action_size,nRow,nCol)
 
 #Options for running using samples, spectrogram and raw data
-
-use_samples=0
-use_spectrogram=1
+use_samples=1
+use_spectrogram=0
 use_raw_data=0
 
 #parameters
