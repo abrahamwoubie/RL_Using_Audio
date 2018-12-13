@@ -3,18 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Agent import Agent
 from ExtractFeatures import Extract_Features
-#from RunDQN import *
-
-from scipy.spatial import  distance
+from scipy.spatial import distance
 
 
 """
-
   action['up'] = 0
   action['right'] = 1
   action['down'] = 2
   action['left'] = 3 
-
 """
 
 nRow=4
@@ -94,15 +90,13 @@ class Environment:
         # Generate list of actions allowed depending on agent grid location
         actions_allowed = []
         row, col = self.state[0], self.state[1]
-        #print("y",self.state[0])
-        #print("x", self.state[1])
-        if (row > 0):  # no passing top-boundary
+        if (row > 0):  # It can not got to the top-boundary
             actions_allowed.append(self.action_dict["up"])
-        if (row < self.nRow - 1):  # no passing bottom-boundary
+        if (row < self.nRow - 1):  # It can not go to bottom-boundary
             actions_allowed.append(self.action_dict["down"])
-        if (col > 0):  # no passing left-boundary
+        if (col > 0):  # It can not go to the left-boundary
             actions_allowed.append(self.action_dict["left"])
-        if (col < self.nCol - 1):  # no passing right-boundary
+        if (col < self.nCol - 1):  # It can not go to right-boundary
             actions_allowed.append(self.action_dict["right"])
         actions_allowed = np.array(actions_allowed, dtype=int)
         return actions_allowed

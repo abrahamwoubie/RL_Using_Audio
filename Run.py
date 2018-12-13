@@ -8,7 +8,7 @@ from Environment import *
 
 # Settings
 
-state_size=100
+state_size=57534
 action_size=4
 
 env = Environment(nRow, nCol)
@@ -16,6 +16,11 @@ agent = Agent(env,state_size,action_size,nRow, nCol)
 
 number_of_iterations_per_episode=[]
 number_of_episodes=[]
+
+#Options for running using samples, spectrogram and raw data
+use_samples=0
+use_spectrogram=1
+use_raw_data=0
 
 # Train agent
 print("\nTraining agent...\n")
@@ -31,9 +36,13 @@ for episode in range(N_episodes):
     # Generate an episode
     reward_episode = 0
     state = env.reset()  # starting state
-    state=samples.Extract_Samples(state[0],state[1],nRow-1,nCol-1)
-    #state=samples.Extract_Raw_Data(state[0],state[1],nRow-1,nCol-1)
-    #state = samples.Extract_Spectrogram(state[0], state[1], nRow - 1, nCol - 1)
+    #options to run the experiment using samples, spectrogram or raw data
+    if(use_samples):
+        state = samples.Extract_Samples(state[0], state[1], nRow-1, nCol-1)
+    elif(use_spectrogram):
+        state = samples.Extract_Spectrogram(state[0], state[1], nRow - 1, nCol - 1)
+    else:
+        state = samples.Extract_Raw_Data(state[0], state[1], nRow - 1, nCol - 1)
     state = np.reshape(state, [1, state_size])
     number_of_episodes.append(episode)
     iteration=0
@@ -41,7 +50,7 @@ for episode in range(N_episodes):
         iteration+=1
         #action = agent.get_action(env,nRow)  # get action
         action=agent.get_action(env,nRow)
-        features, reward, done = env.step(action)  # evolve state by action
+        features, reward, done = env.step(action,use_samples,use_spectrogram,use_raw_data)  # evolve state by action
         features = np.reshape(features, [1, state_size])
         agent.replay_memory(state, action, reward, features, done)
         agent.train_replay()

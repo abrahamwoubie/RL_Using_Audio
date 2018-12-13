@@ -83,8 +83,8 @@ class Agent:
 
         (state, action, state_next, reward, done) = memory
         #print("Memory",memory)
-        self.Q[state,action]+=self.learning_rate * \
-                              (reward + self.discount_factor * np.max(self.Q[state_next,:]) - self.Q[state,action])
+#        self.Q[state,action]+=self.learning_rate * \
+  #                            (reward + self.discount_factor * np.max(self.Q[state_next,:]) - self.Q[state,action])
 
 
     def replay(self, batch_size):
