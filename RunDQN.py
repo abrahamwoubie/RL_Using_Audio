@@ -53,7 +53,7 @@ for episode in range(parameter.Number_of_episodes):
     number_of_episodes.append(episode)
     for iterations in range(parameter.timesteps):
         number_of_iterations+=1
-        action = agent.get_action(env)
+        action = agent.get_action_next(env)
         feature, reward, done = env.step(action,samples_goal)
         reward_per_episode+=reward
         feature = np.reshape(feature, [1, parameter.state_size])
@@ -78,4 +78,5 @@ fig.suptitle('Q-Learning', fontsize=12)
 plt.plot(np.arange(len(number_of_episodes)), number_of_iterations_per_episode)
 plt.ylabel('Number of Iterations')
 plt.xlabel('Episode')
+plt.savefig('4X4.png')
 plt.show()
