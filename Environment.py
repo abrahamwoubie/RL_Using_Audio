@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 from Agent import Agent
 from ExtractFeatures import Extract_Features
 from scipy.spatial import distance
+from GlobalVariables import GlobalVariables
+
+options=GlobalVariables
+grid_size=GlobalVariables
 
 
 """
@@ -13,8 +17,6 @@ from scipy.spatial import distance
   action['left'] = 3 
 """
 
-nRow=4
-nCol=4
 
 class Environment:
     
@@ -27,8 +29,8 @@ class Environment:
 
     def reset(self):
         # Reset agent state to top-left grid corner
-        start_row=random.choice(range(0,nRow-1))
-        start_col=random.choice(range(0,nRow-1))
+        start_row=random.choice(range(0,grid_size.nRow-1))
+        start_col=random.choice(range(0,grid_size.nCol-1))
         self.state = (start_row, start_col)
 
         #goal_row = random.choice(range(0, nRow - 1))
@@ -38,7 +40,7 @@ class Environment:
         return self.state #,self.goal_state
 
 
-    def step(self, action,use_samples,use_spectrogram,use_raw_data):
+    def step(self, action,samples_goal):
         # Evolve agent state
 
         reward = 0
@@ -58,23 +60,26 @@ class Environment:
         samples=Extract_Features
 
         # options to run the experiment using samples, spectrogram or raw data
-        if(use_samples):
-            samples_current=samples.Extract_Samples(state_next[0],state_next[1],nRow-1,nCol-1)
-            samples_goal = samples.Extract_Samples(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        if(options.use_samples):
+            samples_current=samples.Extract_Samples(state_next[0],state_next[1])
             if (distance.euclidean(samples_goal, samples_current) == 0):
                 reward = 1
                 done = True
 
-        if(use_spectrogram):
-            samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1],nRow-1,nCol-1)
-            samples_goal = samples.Extract_Spectrogram(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        elif(options.use_pitch):
+            samples_current=samples.Extract_Pitch(state_next[0],state_next[1])
+            if (distance.euclidean(samples_goal, samples_current) == 0):
+                reward = 1
+                done = True
+
+        elif(options.use_spectrogram):
+            samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1])
             if (np.mean(samples_goal)==np.mean(samples_current)):
                 reward = 1
                 done = True
 
-        if(use_raw_data):
-            samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1],nRow-1,nCol-1)
-            samples_goal = samples.Extract_Raw_Data(nRow - 1, nCol - 1,nRow-1,nCol-1)
+        else:
+            samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1])
             if (np.mean(samples_goal)==np.mean(samples_current) == 0):
                 reward = 1
                 done = True
@@ -84,7 +89,7 @@ class Environment:
         #     done=True
 
         self.state = state_next
-        return samples_goal, reward, done
+        return samples_current, reward, done
 
     def allowed_actions(self):
         # Generate list of actions allowed depending on agent grid location

@@ -4,11 +4,12 @@ from scipy import signal # audio processing
 from scipy.fftpack import dct
 from pydub import AudioSegment
 import librosa # library for audio processing
-
+from GlobalVariables import  GlobalVariables
+grid_size=GlobalVariables
 class Extract_Features:
 
 
-    def Extract_Samples(row, col,nRow,nCol):
+    def Extract_Samples(row, col):
         #print("Extract Sample of Row {} Col {} nRow {} nCol {}".format(row,col,nRow,nCol))
 
         fs = 100  # sample rate
@@ -18,13 +19,13 @@ class Extract_Features:
 
         # compute the value (amplitude) of the sin wave at the for each sample
         # if letter in b'G':
-        if(row==nRow and col==nCol):
+        if(row==grid_size.nRow and col==grid_size.nCol):
             samples = [100 + row + col + np.sin(2 * np.pi * f * (i / fs)) for i in x]
         else:
             samples = [row + col + np.sin(2 * np.pi * f * (i / fs)) for i in x]
         return samples
 
-    def Extract_Spectrogram(row, col,nRow,nCol):
+    def Extract_Spectrogram(row, col):
         fs = 10e3
         N = 1e5
         amp = 2 * np.sqrt(2)
@@ -37,11 +38,13 @@ class Extract_Features:
         # x = carrier + noise  # x is the sample
         x = carrier
         frequencies, times, spectrogram = signal.spectrogram(x, fs)
-        if (row == nRow and col == nCol):
+        if (row == grid_size.nRow and col == grid_size.nCol):
             spectrogram = spectrogram *100
+        else:
+            spectrogram = spectrogram + row + col
         return spectrogram
 
-    def Extract_Pitch(row, col,nRow,nCol):
+    def Extract_Pitch(row, col):
 
         pitch_List = []
         sample_rate = 44100
@@ -61,20 +64,23 @@ class Extract_Features:
         # input array should be of type aubio.float_type (defaults to float32)
         x_padded = x_padded.astype(aubio.float_type)
 
-        # if letter in b'G':
-
-
-        for frame, i in zip(x_padded, range(len(x_padded))):
-            time_str = "%.2f" % (i * p.hop_size / float(sample_rate))
-            pitch_candidate = p(frame)[0] + row + col + 100
-            # print(pitch_candidate)
-            pitch_List.append(pitch_candidate)
-
+        if(row==grid_size.nRow and grid_size==grid_size.nCol):
+            for frame, i in zip(x_padded, range(len(x_padded))):
+                time_str = "%.2f" % (i * p.hop_size / float(sample_rate))
+                pitch_candidate = p(frame)[0] + row + col + 100
+                # print(pitch_candidate)
+                pitch_List.append(pitch_candidate)
+        else:
+            for frame, i in zip(x_padded, range(len(x_padded))):
+                time_str = "%.2f" % (i * p.hop_size / float(sample_rate))
+                pitch_candidate = p(frame)[0] + row + col + 100
+                # print(pitch_candidate)
+                pitch_List.append(pitch_candidate)
         return pitch_List
 
-    def Extract_Raw_Data (row, col,nRow,nCol):
+    def Extract_Raw_Data (row, col):
         sound = AudioSegment.from_wav("test.wav")
         raw_data = sound._data
-        if(row == nRow and col == nCol):
+        if(row == grid_size.nRow and col == grid_size.nCol):
             raw_data=raw_data*5
         return raw_data

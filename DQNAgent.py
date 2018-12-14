@@ -5,12 +5,17 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-from keras.layers import Dense, Conv1D, Flatten
+from keras.layers import Dense, Conv2D, Flatten, Convolution2D, Convolution1D
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from GlobalVariables import  GlobalVariables
+grid_size=GlobalVariables
 
 
 
 class DQNAgent:
-    def __init__(self, state_size, action_size,nRow,nCol):
+    def __init__(self, state_size, action_size):
         self.state_size = state_size
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
@@ -21,32 +26,32 @@ class DQNAgent:
         self.learning_rate = 0.001
         self.train_start = 100
         self.model = self._build_model()
-        self.Q = np.zeros([nRow*nCol, 4])
+        self.Q = np.zeros([grid_size.nRow*grid_size.nCol, 4])
     #
-    # def _build_model(self):
-    #     # Neural Net for Deep-Q learning Model
-    #     model = Sequential()
-    #     #model.add(Dense(24, input_dim=self.state_size, activation='relu'))
-    #     model.add(Dense(24,input_shape=(self.state_size,),activation='relu'))
-    #     model.add(Dense(24, activation='relu'))
-    #     model.add(Dense(self.action_size, activation='linear'))
-    #     model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
-    #     return model
-
     def _build_model(self):
+        # Neural Net for Deep-Q learning Model
         model = Sequential()
-
-        #model.add(Convolution2D(32, (1, 1), activation='relu', input_shape=(1, 1, 100), data_format='channels_first'))
-
-        model.add(Conv1D(24, kernel_size=1, activation='relu', input_shape = (100,1))) #, data_format='channels_first'))
-        model.add(Conv1D(24, kernel_size=1, activation='relu'))
-        model.add(Flatten())
-        model.add(Dense(self.action_size, activation='softmax'))
-        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        #model.add(Dense(24, input_dim=self.state_size, activation='relu'))
+        model.add(Dense(24,input_shape=(self.state_size,),activation='relu'))
+        model.add(Dense(24, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
+        model.compile(loss='mse',optimizer=Adam(lr=self.learning_rate))
         return model
 
-    #def remember(self, state, action, reward, next_state, done):
-     #   self.memory.append((state, action, reward, next_state, done))
+    # def _build_model(self):
+    #     model = Sequential()
+    #     model.add(Conv2D(32, kernel_size=(1, 1), activation='relu', input_shape=(10, 10, 1)))
+    #     model.add(MaxPooling2D(pool_size=(1, 1)))
+    #     model.add(Dropout(0.25))
+    #     model.add(Flatten())
+    #     model.add(Dense(32, activation='relu'))
+    #     model.add(Dropout(0.25))
+    #     model.add(Dense(4, activation='softmax'))
+    #     model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adadelta(),
+    #                   metrics=['accuracy'])
+    #     print(model.summary())
+    #     print("OK")
+    #     return model
 
     def replay_memory(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -78,10 +83,10 @@ class DQNAgent:
     def save(self, name):
         self.model.save_weights(name)
 
-    def get_action_next(self,env,nRow):
+    def get_action_next(self,env):
         return np.random.choice(env.allowed_actions())
 
-    def get_action(self, env,nRow):
+    def get_action(self, env):
         # Epsilon-greedy agent policy
         if random.uniform(0, 1) < self.epsilon:
             # explore
@@ -91,6 +96,6 @@ class DQNAgent:
         # exploit on allowed actions
             state = env.state;
             actions_allowed = env.allowed_actions()
-            Q_s = self.Q[state[0]*nRow+state[1], actions_allowed]
+            Q_s = self.Q[state[0]*grid_size.nRow+state[1], actions_allowed]
             actions_greedy = actions_allowed[np.flatnonzero(Q_s == np.max(Q_s))]
             return np.random.choice(actions_greedy)
