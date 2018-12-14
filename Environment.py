@@ -57,39 +57,41 @@ class Environment:
         if(action==3): # left
             state_next = self.state[0]  , (self.state[1] - 1)
 
-        samples=Extract_Features
+        # samples=Extract_Features
+        #
+        # # options to run the experiment using samples, spectrogram or raw data
+        # if(options.use_samples):
+        #     samples_current=samples.Extract_Samples(state_next[0],state_next[1])
+        #     if (distance.euclidean(samples_goal, samples_current) == 0):
+        #         reward = 1
+        #         done = True
+        #
+        # elif(options.use_pitch):
+        #     samples_current=samples.Extract_Pitch(state_next[0],state_next[1])
+        #     if (distance.euclidean(samples_goal, samples_current) == 0):
+        #         reward = 1
+        #         done = True
+        #
+        # elif(options.use_spectrogram):
+        #     samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1])
+        #     if (np.mean(samples_goal)==np.mean(samples_current)):
+        #         reward = 1
+        #         done = True
+        #
+        # else:
+        #     samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1])
+        #     if (np.mean(samples_goal)==np.mean(samples_current) == 0):
+        #         reward = 1
+        #         done = True
 
-        # options to run the experiment using samples, spectrogram or raw data
-        if(options.use_samples):
-            samples_current=samples.Extract_Samples(state_next[0],state_next[1])
-            if (distance.euclidean(samples_goal, samples_current) == 0):
-                reward = 1
-                done = True
-
-        elif(options.use_pitch):
-            samples_current=samples.Extract_Pitch(state_next[0],state_next[1])
-            if (distance.euclidean(samples_goal, samples_current) == 0):
-                reward = 1
-                done = True
-
-        elif(options.use_spectrogram):
-            samples_current=samples.Extract_Spectrogram(state_next[0],state_next[1])
-            if (np.mean(samples_goal)==np.mean(samples_current)):
-                reward = 1
-                done = True
-
-        else:
-            samples_current=samples.Extract_Raw_Data(state_next[0],state_next[1])
-            if (np.mean(samples_goal)==np.mean(samples_current) == 0):
-                reward = 1
-                done = True
-
-        # if(state_next==(self.nRow-1,self.nCol-1)):
-        #     reward=1
-        #     done=True
+        if(state_next==(self.nRow-1,self.nCol-1)):
+            reward=1
+            done=True
 
         self.state = state_next
-        return samples_current, reward, done
+        #return samples_current, reward, done
+        return state_next,reward,done
+
 
     def allowed_actions(self):
         # Generate list of actions allowed depending on agent grid location
